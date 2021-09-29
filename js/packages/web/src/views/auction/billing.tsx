@@ -25,7 +25,7 @@ import {
   toPublicKey,
   WalletSigner,
 } from '@oyster/common';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@identity.com/wallet-adapter-react';
 import { useMeta } from '../../contexts';
 import {
   getBidderKeys,
@@ -50,7 +50,7 @@ export const BillingView = () => {
     <InnerBillingView
       auctionView={auctionView}
       connection={connection}
-      wallet={wallet}
+      wallet={wallet as WalletSigner}
       mint={mint}
     />
   ) : (

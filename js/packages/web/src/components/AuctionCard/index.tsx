@@ -20,9 +20,9 @@ import {
   MAX_METADATA_LEN,
   MAX_EDITION_LEN,
   useWalletModal,
-  VaultState,
+  VaultState, WalletSigner,
 } from '@oyster/common';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@identity.com/wallet-adapter-react';
 import { AuctionView, useBidsForAuction, useUserBalance } from '../../hooks';
 import { sendPlaceBid } from '../../actions/sendPlaceBid';
 // import { bidAndClaimInstantSale } from '../../actions/bidAndClaimInstantSale';
@@ -315,7 +315,7 @@ export const AuctionCard = ({
                   if (eligibleForAnything) {
                     await sendRedeemBid(
                       connection,
-                      wallet,
+                      wallet as WalletSigner,
                       myPayingAccount.pubkey,
                       auctionView,
                       accountByMint,
@@ -326,7 +326,7 @@ export const AuctionCard = ({
                   } else {
                     await sendCancelBid(
                       connection,
-                      wallet,
+                      wallet as WalletSigner,
                       myPayingAccount.pubkey,
                       auctionView,
                       accountByMint,
@@ -373,7 +373,7 @@ export const AuctionCard = ({
               onClick={async () => {
                 setLoading(true);
                 try {
-                  await startAuctionManually(connection, wallet, auctionView);
+                  await startAuctionManually(connection, wallet as WalletSigner, auctionView);
                 } catch (e) {
                   console.error(e);
                 }
@@ -500,7 +500,7 @@ export const AuctionCard = ({
                 if (myPayingAccount && value) {
                   const bid = await sendPlaceBid(
                     connection,
-                    wallet,
+                    wallet as WalletSigner,
                     myPayingAccount.pubkey,
                     auctionView,
                     accountByMint,
@@ -536,7 +536,7 @@ export const AuctionCard = ({
                   try {
                     const bid = await sendPlaceBid(
                       connection,
-                      wallet,
+                      wallet as WalletSigner,
                       myPayingAccount.pubkey,
                       auctionView,
                       accountByMint,
@@ -562,7 +562,7 @@ export const AuctionCard = ({
                 try {
                   await sendRedeemBid(
                     connection,
-                    wallet,
+                    wallet as WalletSigner,
                     myPayingAccount.pubkey,
                     auctionView,
                     accountByMint,
