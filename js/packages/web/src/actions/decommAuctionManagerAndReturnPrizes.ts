@@ -7,7 +7,7 @@ import {
   setVaultAuthority,
   WalletSigner,
 } from '@oyster/common';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 import { AuctionView } from '../hooks';
 import { AuctionManagerStatus } from '@oyster/common/dist/lib/models/metaplex/index';
 import { decommissionAuctionManager } from '@oyster/common/dist/lib/models/metaplex/decommissionAuctionManager';

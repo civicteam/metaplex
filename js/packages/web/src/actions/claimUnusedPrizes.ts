@@ -13,7 +13,7 @@ import {
   toPublicKey,
   WalletSigner,
 } from '@oyster/common';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 import { AccountLayout, MintLayout } from '@solana/spl-token';
 import { AuctionView } from '../hooks';
 import {

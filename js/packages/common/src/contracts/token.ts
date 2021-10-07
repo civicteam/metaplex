@@ -7,7 +7,7 @@ import {
   SystemProgram,
 } from '@solana/web3.js';
 import { WalletSigner } from '../contexts';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 
 export const mintNFT = async (
   connection: Connection,

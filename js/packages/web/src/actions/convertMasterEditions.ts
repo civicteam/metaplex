@@ -14,7 +14,7 @@ import {
   toPublicKey,
   WalletSigner,
 } from '@oyster/common';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 import { Token } from '@solana/spl-token';
 
 const BATCH_SIZE = 10;

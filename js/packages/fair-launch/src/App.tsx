@@ -5,7 +5,7 @@ import Home from './Home';
 
 import * as anchor from '@project-serum/anchor';
 import { clusterApiUrl } from '@solana/web3.js';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { WalletAdapterNetwork } from '@identity.com/wallet-adapter-base';
 import {
   getPhantomWallet,
   getSolflareWallet,

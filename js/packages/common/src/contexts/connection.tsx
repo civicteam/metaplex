@@ -23,7 +23,7 @@ import {
   ENV as ChainId,
 } from '@solana/spl-token-registry';
 import { WalletSigner } from './wallet';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash;

@@ -12,7 +12,7 @@ import {
   AUCTION_PREFIX,
   createAuction,
 } from '@oyster/common/dist/lib/actions/auction';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 
 // This command makes an auction
 export async function makeAuction(

@@ -16,7 +16,7 @@ import {
 
 import BN from 'bn.js';
 import { closeVault } from './closeVault';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 
 const BATCH_SIZE = 1;
 

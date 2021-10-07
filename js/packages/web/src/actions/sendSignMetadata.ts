@@ -5,7 +5,7 @@ import {
   StringPublicKey,
   WalletSigner,
 } from '@oyster/common';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 
 export async function sendSignMetadata(
   connection: Connection,

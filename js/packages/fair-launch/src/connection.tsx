@@ -14,7 +14,7 @@ import {
 
 import {
   WalletNotConnectedError,
-} from '@solana/wallet-adapter-base';
+} from '@identity.com/wallet-adapter-base';
 
 interface BlockhashAndFeeCalculator {
   blockhash: Blockhash;

@@ -9,7 +9,7 @@ import {
   toPublicKey,
   WalletSigner,
 } from '@oyster/common';
-import { WalletNotConnectedError } from '@solana/wallet-adapter-base';
+import { WalletNotConnectedError } from '@identity.com/wallet-adapter-base';
 import { approve } from '@oyster/common/dist/lib/models/account';
 import { createTokenAccount } from '@oyster/common/dist/lib/actions/account';
 import { TokenAccount } from '@oyster/common/dist/lib/models/account';
