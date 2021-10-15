@@ -401,6 +401,7 @@ export async function sendSignedTransaction({
         for (let i = simulateResult.logs.length - 1; i >= 0; --i) {
           const line = simulateResult.logs[i];
           if (line.startsWith('Program log: ')) {
+            console.log(simulateResult);
             throw new Error(
               'Transaction failed: ' + line.slice('Program log: '.length),
             );

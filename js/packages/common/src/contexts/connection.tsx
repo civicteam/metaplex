@@ -72,7 +72,7 @@ export const ENDPOINTS = [
   },
 ];
 
-const DEFAULT = ENDPOINTS[0].endpoint;
+const DEFAULT = ENDPOINTS[4].endpoint; // default to devnet
 
 interface ConnectionConfig {
   connection: Connection;
@@ -87,7 +87,7 @@ const ConnectionContext = React.createContext<ConnectionConfig>({
   endpoint: DEFAULT,
   setEndpoint: () => {},
   connection: new Connection(DEFAULT, 'recent'),
-  env: ENDPOINTS[0].name,
+  env: ENDPOINTS[4].name, // default to devnet
   tokens: [],
   tokenMap: new Map<string, TokenInfo>(),
 });
@@ -100,7 +100,7 @@ export function ConnectionProvider({ children = undefined as any }) {
 
   const [savedEndpoint, setEndpoint] = useLocalStorageState(
     'connectionEndpoint',
-    ENDPOINTS[0].endpoint,
+    DEFAULT,
   );
   const endpoint = queryEndpoint || savedEndpoint;
 
@@ -110,7 +110,7 @@ export function ConnectionProvider({ children = undefined as any }) {
   );
 
   const env =
-    ENDPOINTS.find(end => end.endpoint === endpoint)?.name || ENDPOINTS[0].name;
+    ENDPOINTS.find(end => end.endpoint === endpoint)?.name || ENDPOINTS[4].name; // default to devnet
 
   const [tokens, setTokens] = useState<TokenInfo[]>([]);
   const [tokenMap, setTokenMap] = useState<Map<string, TokenInfo>>(new Map());
@@ -416,7 +416,7 @@ export const sendTransaction = async (
 
   const rawTransaction = transaction.serialize();
   let options = {
-    skipPreflight: true,
+    skipPreflight: false,
     commitment,
   };
 
@@ -530,7 +530,7 @@ export async function sendSignedTransaction({
   const txid: TransactionSignature = await connection.sendRawTransaction(
     rawTransaction,
     {
-      skipPreflight: true,
+      skipPreflight: false,
     },
   );
 
@@ -540,7 +540,7 @@ export async function sendSignedTransaction({
   (async () => {
     while (!done && getUnixTs() - startTime < timeout) {
       connection.sendRawTransaction(rawTransaction, {
-        skipPreflight: true,
+        skipPreflight: false,
       });
       await sleep(500);
     }
