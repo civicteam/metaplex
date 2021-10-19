@@ -398,7 +398,7 @@ export function Notifications() {
         try {
           await unwindVault(
             connection,
-            wallet,
+            wallet as WalletSigner,
             v,
             safetyDepositBoxesByVaultAndIndex,
           );
@@ -447,7 +447,7 @@ export function Notifications() {
           try {
             await decommAuctionManagerAndReturnPrizes(
               connection,
-              wallet,
+              wallet as WalletSigner,
               v,
               safetyDepositBoxesByVaultAndIndex,
             );
@@ -490,7 +490,7 @@ export function Notifications() {
       ),
       action: async () => {
         try {
-          await sendSignMetadata(connection, wallet, m.pubkey);
+          await sendSignMetadata(connection, wallet as WalletSigner, m.pubkey);
         } catch (e) {
           console.error(e);
           return false;
@@ -509,7 +509,7 @@ export function Notifications() {
         description: <span>You can activate it now if you wish.</span>,
         action: async () => {
           try {
-            await startAuctionManually(connection, wallet, v);
+            await startAuctionManually(connection, wallet as WalletSigner, v);
           } catch (e) {
             console.error(e);
             return false;

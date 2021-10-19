@@ -65,6 +65,11 @@ export const ENDPOINTS = [
     endpoint: clusterApiUrl('devnet'),
     ChainId: ChainId.Devnet,
   },
+  {
+    name: 'localnet' as ENV,
+    endpoint: 'http://localhost:8899',
+    ChainId: 104
+  },
 ];
 
 const DEFAULT = ENDPOINTS[4].endpoint; // default to devnet
@@ -560,7 +565,7 @@ export async function sendSignedTransaction({
     slot = confirmation?.slot || 0;
   } catch (err) {
     console.error('Timeout Error caught', err);
-    if (err.timeout) {
+    if (Object.hasOwnProperty.call(err,'timeout')) {
       throw new Error('Timed out awaiting confirmation on transaction');
     }
     let simulateResult: SimulatedTransactionResponse | null = null;
@@ -573,6 +578,7 @@ export async function sendSignedTransaction({
       if (simulateResult.logs) {
         for (let i = simulateResult.logs.length - 1; i >= 0; --i) {
           const line = simulateResult.logs[i];
+          console.log(simulateResult);
           if (line.startsWith('Program log: ')) {
             throw new Error(
               'Transaction failed: ' + line.slice('Program log: '.length),
