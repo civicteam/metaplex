@@ -13,6 +13,7 @@ use {
             MAX_CREATOR_LEN, MAX_CREATOR_LIMIT, MAX_NAME_LENGTH, MAX_SYMBOL_LENGTH, MAX_URI_LENGTH,
         },
     },
+    solana_gateway::Gateway,
     spl_token::state::{Account, Mint},
     std::cell::Ref,
 };
@@ -57,6 +58,15 @@ pub mod nft_candy_machine {
             let token_account: Account = assert_initialized(&token_account_info)?;
 
             assert_owned_by(&token_account_info, &spl_token::id())?;
+
+            if let Some(gatekeeper_network) = candy_machine.gatekeeper_network {
+                assert_eq!(ctx.remaining_accounts.len() > 2, true);
+                let gateway_token = &ctx.remaining_accounts[2];
+                let gateway_verification_result = Gateway::verify_gateway_token_account_info(
+                    gateway_token.unwrap(), ctx.accounts.wallet, &auction.gatekeeper_network.unwrap())?;
+                msg!("Gateway Token validated {:?}", gateway_verification_result);
+            }
+
 
             if token_account.mint != mint {
                 return Err(ErrorCode::MintMismatch.into());
@@ -395,6 +405,11 @@ pub mod nft_candy_machine {
             candy_machine.token_mint = Some(*token_mint_info.key);
         }
 
+        if ctx.remaining_accounts.len() > 1 {
+            let gatekeeper_network = &ctx.remaining_accounts[1];
+            candy_machine.gatekeeper_network = Some(*gatekeeper_network.key);
+        }
+
         if get_config_count(&ctx.accounts.config.to_account_info().data.borrow())?
             < candy_machine.data.items_available as usize
         {
@@ -504,6 +519,7 @@ pub struct CandyMachine {
     pub authority: Pubkey,
     pub wallet: Pubkey,
     pub token_mint: Option<Pubkey>,
+    pub gatekeeper_network: Option<Pubkey>,
     pub config: Pubkey,
     pub data: CandyMachineData,
     pub items_redeemed: u64,
