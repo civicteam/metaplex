@@ -487,6 +487,10 @@ programCommand('create_candy_machine')
     '-s, --sol-treasury-account <string>',
     'SOL account that receives mint payments.',
   )
+  .option(
+    '-g, --gatekeeper-network <string>',
+    'The gatekeeper network used to restrict access to permissioned wallets.',
+  )
   .action(async (directory, cmd) => {
     const {
       keypair,
@@ -496,6 +500,7 @@ programCommand('create_candy_machine')
       splToken,
       splTokenAccount,
       solTreasuryAccount,
+      gatekeeperNetwork,
     } = cmd.opts();
 
     let parsedPrice = parsePrice(price);
@@ -557,6 +562,10 @@ programCommand('create_candy_machine')
 
     if (solTreasuryAccount) {
       wallet = new PublicKey(solTreasuryAccount);
+    }
+
+    if (gatekeeperNetwork) {
+      remainingAccounts.push({})
     }
 
     const config = new PublicKey(cacheContent.program.config);

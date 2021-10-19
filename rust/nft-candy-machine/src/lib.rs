@@ -63,7 +63,10 @@ pub mod nft_candy_machine {
                 assert_eq!(ctx.remaining_accounts.len() > 2, true);
                 let gateway_token = &ctx.remaining_accounts[2];
                 let gateway_verification_result = Gateway::verify_gateway_token_account_info(
-                    gateway_token.unwrap(), ctx.accounts.wallet, &auction.gatekeeper_network.unwrap())?;
+                    gateway_token,
+                    ctx.accounts.wallet.key,
+                    &gatekeeper_network
+                )?;
                 msg!("Gateway Token validated {:?}", gateway_verification_result);
             }
 
@@ -391,6 +394,14 @@ pub mod nft_candy_machine {
         candy_machine.config = ctx.accounts.config.key();
         candy_machine.bump = bump;
         if ctx.remaining_accounts.len() > 0 {
+            if ctx.remaining_accounts.len() > 1 {
+                let [token_mint_info, gatekeeper_network] = &ctx.remaining_accounts;
+
+                add_token_mint(candy_machine, token_mint_info, ctx);
+                candy_machine.gatekeeper_network = Some(*gatekeeper_network.key);
+            } else {
+                // check if token mint or gatekeeper network
+            }
             let token_mint_info = &ctx.remaining_accounts[0];
             let _token_mint: Mint = assert_initialized(&token_mint_info)?;
             let token_account: Account = assert_initialized(&ctx.accounts.wallet)?;

@@ -1957,6 +1957,7 @@ dependencies = [
  "anchor-lang",
  "arrayref",
  "metaplex-token-metadata",
+ "solana-gateway",
  "spl-token",
 ]
 
