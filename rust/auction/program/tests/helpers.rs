@@ -151,8 +151,6 @@ pub async fn create_store(
     payer: &Keypair,
     recent_blockhash: &Hash,
 ) -> Result<Pubkey, TransportError> {
-    println!("metaplex program id");
-    // println!(metaplex_program_id.to_bytes());
     let (store, _)= Pubkey::find_program_address(
         &[
             br"metaplex",
