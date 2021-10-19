@@ -151,12 +151,21 @@ pub async fn create_store(
     payer: &Keypair,
     recent_blockhash: &Hash,
 ) -> Result<Pubkey, TransportError> {
-    let store= Keypair::new().pubkey(); // TODO must be a PDA
+    println!("metaplex program id");
+    // println!(metaplex_program_id.to_bytes());
+    let (store, _)= Pubkey::find_program_address(
+        &[
+            br"metaplex",
+            &metaplex_program_id.to_bytes(),
+            &payer.pubkey().to_bytes(),
+        ],
+        metaplex_program_id,
+    );
 
     let metaplex_token_vault_id = Keypair::new().pubkey();
     let metaplex_token_metadata_id = Keypair::new().pubkey();
 
-    let data = [];
+    let data = [08,00,00];  // add the data manually to avoid importing metaplex
     let keys = vec!(
         AccountMeta::new(store, false),
         AccountMeta::new_readonly(payer.pubkey(), true),
