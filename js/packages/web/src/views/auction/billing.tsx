@@ -51,7 +51,7 @@ export const BillingView = () => {
     <InnerBillingView
       auctionView={auctionView}
       connection={connection}
-      wallet={wallet as WalletSigner}
+      wallet={wallet}
       mint={mint}
     />
   ) : (
@@ -375,7 +375,10 @@ export const InnerBillingView = ({
   const art = useArt(id);
   const balance = useUserBalance(auctionView.auction.info.tokenMint);
   const [escrowBalance, setEscrowBalance] = useState<number | undefined>();
-  const { whitelistedCreatorsByCreator } = useMeta();
+  const { whitelistedCreatorsByCreator, pullBillingPage } = useMeta();
+  useEffect(() => {
+    pullBillingPage(id);
+  }, []);
   const [escrowBalanceRefreshCounter, setEscrowBalanceRefreshCounter] =
     useState(0);
 
