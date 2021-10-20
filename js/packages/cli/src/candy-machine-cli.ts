@@ -490,6 +490,7 @@ programCommand('create_candy_machine')
   .option(
     '-g, --gatekeeper-network <string>',
     'The gatekeeper network used to restrict access to permissioned wallets.',
+    (value: string) => new PublicKey(value)
   )
   .action(async (directory, cmd) => {
     const {
@@ -564,10 +565,6 @@ programCommand('create_candy_machine')
       wallet = new PublicKey(solTreasuryAccount);
     }
 
-    if (gatekeeperNetwork) {
-      remainingAccounts.push({})
-    }
-
     const config = new PublicKey(cacheContent.program.config);
     const [candyMachine, bump] = await getCandyMachineAddress(
       config,
@@ -580,6 +577,7 @@ programCommand('create_candy_machine')
         price: new anchor.BN(parsedPrice),
         itemsAvailable: new anchor.BN(Object.keys(cacheContent.items).length),
         goLiveDate: null,
+        gatekeeperNetwork,
       },
       {
         accounts: {

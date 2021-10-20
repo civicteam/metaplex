@@ -18,6 +18,16 @@ use {
     std::cell::Ref,
 };
 
+fn verify_gateway_token<'info>(wallet: &AccountInfo<'info>, gateway_token: &AccountInfo<'info>, gatekeeper_network: Pubkey) -> ProgramResult {
+    let gateway_verification_result = Gateway::verify_gateway_token_account_info(
+        gateway_token,
+        wallet.key,
+        &gatekeeper_network
+    )?;
+    msg!("Gateway Token validated {:?}", gateway_verification_result);
+    Ok(())
+}
+
 const PREFIX: &str = "candy_machine";
 #[program]
 pub mod nft_candy_machine {
@@ -52,24 +62,20 @@ pub mod nft_candy_machine {
             return Err(ErrorCode::CandyMachineEmpty.into());
         }
 
+        if let Some(gatekeeper_network) = candy_machine.data.gatekeeper_network {
+            // if a gateway token is required, the last account should be a gateway token
+            assert_eq!(ctx.remaining_accounts.len() > 0, true);
+            let last_account = ctx.remaining_accounts.last().unwrap();
+            // the mint authority is the wallet that should be permissioned. Typically (but not always) the payer
+            verify_gateway_token(&ctx.accounts.mint_authority, last_account, gatekeeper_network)?;
+        }
+
         if let Some(mint) = candy_machine.token_mint {
             let token_account_info = &ctx.remaining_accounts[0];
             let transfer_authority_info = &ctx.remaining_accounts[1];
             let token_account: Account = assert_initialized(&token_account_info)?;
 
             assert_owned_by(&token_account_info, &spl_token::id())?;
-
-            if let Some(gatekeeper_network) = candy_machine.gatekeeper_network {
-                assert_eq!(ctx.remaining_accounts.len() > 2, true);
-                let gateway_token = &ctx.remaining_accounts[2];
-                let gateway_verification_result = Gateway::verify_gateway_token_account_info(
-                    gateway_token,
-                    ctx.accounts.wallet.key,
-                    &gatekeeper_network
-                )?;
-                msg!("Gateway Token validated {:?}", gateway_verification_result);
-            }
-
 
             if token_account.mint != mint {
                 return Err(ErrorCode::MintMismatch.into());
@@ -394,14 +400,6 @@ pub mod nft_candy_machine {
         candy_machine.config = ctx.accounts.config.key();
         candy_machine.bump = bump;
         if ctx.remaining_accounts.len() > 0 {
-            if ctx.remaining_accounts.len() > 1 {
-                let [token_mint_info, gatekeeper_network] = &ctx.remaining_accounts;
-
-                add_token_mint(candy_machine, token_mint_info, ctx);
-                candy_machine.gatekeeper_network = Some(*gatekeeper_network.key);
-            } else {
-                // check if token mint or gatekeeper network
-            }
             let token_mint_info = &ctx.remaining_accounts[0];
             let _token_mint: Mint = assert_initialized(&token_mint_info)?;
             let token_account: Account = assert_initialized(&ctx.accounts.wallet)?;
@@ -414,11 +412,6 @@ pub mod nft_candy_machine {
             }
 
             candy_machine.token_mint = Some(*token_mint_info.key);
-        }
-
-        if ctx.remaining_accounts.len() > 1 {
-            let gatekeeper_network = &ctx.remaining_accounts[1];
-            candy_machine.gatekeeper_network = Some(*gatekeeper_network.key);
         }
 
         if get_config_count(&ctx.accounts.config.to_account_info().data.borrow())?
@@ -530,7 +523,6 @@ pub struct CandyMachine {
     pub authority: Pubkey,
     pub wallet: Pubkey,
     pub token_mint: Option<Pubkey>,
-    pub gatekeeper_network: Option<Pubkey>,
     pub config: Pubkey,
     pub data: CandyMachineData,
     pub items_redeemed: u64,
@@ -543,6 +535,7 @@ pub struct CandyMachineData {
     pub price: u64,
     pub items_available: u64,
     pub go_live_date: Option<i64>,
+    pub gatekeeper_network: Option<Pubkey>,
 }
 
 pub const CONFIG_ARRAY_START: usize = 32 + // authority
