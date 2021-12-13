@@ -42,7 +42,7 @@ import {
 } from './fair-launch';
 
 import { AlertState, formatNumber, getAtaForMint, toDate } from './utils';
-import { CTAButton, MintButton } from './MintButton';
+import { CTAButton, MintButtonContext } from './MintButton';
 import { AntiRug } from './AntiRug';
 import { getPhase, Phase, PhaseHeader } from './PhaseHeader';
 import { GatewayProvider } from '@civic/solana-gateway-react';
@@ -700,43 +700,14 @@ const Home = (props: HomeProps) => {
                       isWinner(fairLaunch) ||
                       fairLaunchBalance > 0) && (
                       <MintContainer>
-                        {candyMachine?.state.isActive &&
-                        candyMachine?.state.gatekeeper &&
-                        wallet.publicKey &&
-                        wallet.signTransaction ? (
-                          <GatewayProvider
-                            wallet={{
-                              publicKey:
-                                wallet.publicKey ||
-                                new PublicKey(CANDY_MACHINE_PROGRAM),
-                              //@ts-ignore
-                              signTransaction: wallet.signTransaction,
-                            }}
-                            // // Replace with following when added
-                            // gatekeeperNetwork={candyMachine.state.gatekeeper_network}
-                            gatekeeperNetwork={
-                              candyMachine?.state?.gatekeeper?.gatekeeperNetwork
-                            } // This is the ignite (captcha) network
-                            /// Don't need this for mainnet
-                            clusterUrl={rpcUrl}
-                          >
-                            <MintButton
-                              candyMachine={candyMachine}
-                              fairLaunch={fairLaunch}
-                              isMinting={isMinting}
-                              fairLaunchBalance={fairLaunchBalance}
-                              onMint={onMint}
-                            />
-                          </GatewayProvider>
-                        ) : (
-                          <MintButton
-                            candyMachine={candyMachine}
-                            fairLaunch={fairLaunch}
-                            isMinting={isMinting}
-                            fairLaunchBalance={fairLaunchBalance}
-                            onMint={onMint}
-                          />
-                        )}
+                        <MintButtonContext
+                          wallet={wallet}
+                          candyMachine={candyMachine}
+                          fairLaunch={fairLaunch}
+                          isMinting={isMinting}
+                          fairLaunchBalance={fairLaunchBalance}
+                          onMint={onMint}
+                        />
                       </MintContainer>
                     )}
 
