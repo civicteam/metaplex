@@ -4,7 +4,6 @@ import { CandyMachineAccount } from './candy-machine';
 import { CircularProgress } from '@material-ui/core';
 import { GatewayStatus, useGateway } from '@civic/solana-gateway-react';
 import { useEffect, useState } from 'react';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export const CTAButton = styled(Button)`
   width: 100%;
@@ -29,7 +28,6 @@ export const MintButton = ({
   const { requestGatewayToken, gatewayStatus } = useGateway();
   const [clicked, setClicked] = useState(false);
   const [showEncore, setShowEncore] = useState(false);
-  const wallet = useWallet();
 
   useEffect(() => {
     if (gatewayStatus === GatewayStatus.ACTIVE && clicked) {
@@ -38,26 +36,11 @@ export const MintButton = ({
     }
   }, [gatewayStatus, clicked, setClicked, onMint]);
 
-  useEffect(() => {
-    if (showEncore) {
-      const fc = async (event: { data: string }) => {
-        if (event.data === 'QUIZ_FINISHED') {
-          setShowEncore(false);
-          await requestGatewayToken();
-        }
-      };
-
-      window.addEventListener('message', fc);
-
-      return () => {
-        window.removeEventListener('message', fc);
-      };
-    }
-  }, [showEncore]);
-
   const getMintButtonContent = () => {
     if (candyMachine?.state.isSoldOut) {
       return 'SOLD OUT';
+    } else if (showEncore) {
+      return 'Click when competed Encore Captcha';
     } else if (isMinting) {
       return <CircularProgress />;
     } else if (candyMachine?.state.isPresale) {
@@ -69,15 +52,6 @@ export const MintButton = ({
 
   return (
     <>
-      {showEncore && (
-        <iframe
-          src={`http://www.encore.fans/embed?wallet=${wallet.publicKey?.toBase58()}&target=${
-            window.location.href
-          }`}
-          width="360"
-          height="540"
-        ></iframe>
-      )}
       <CTAButton
         disabled={
           candyMachine?.state.isSoldOut ||
@@ -90,12 +64,20 @@ export const MintButton = ({
             if (gatewayStatus === GatewayStatus.ACTIVE) {
               setClicked(true);
             } else {
-              if (
+              if (showEncore){
+                setShowEncore(false);
+                await requestGatewayToken();
+              }
+              else if (
                 candyMachine.state.gatekeeper.gatekeeperNetwork.toBase58() ==
                 'ign2PJfwxvYxAZpMdXgLdY4VLCnChPZWjtTeQwQfQdc'
-              )
+              ) {
                 setShowEncore(true);
-              else await requestGatewayToken();
+                window.open('https://www.encore.fans/verify-hooman', '_blank')
+              }
+              else {
+                await requestGatewayToken();
+              }
             }
           } else {
             await onMint();
